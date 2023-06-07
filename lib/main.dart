@@ -1,3 +1,4 @@
+import 'package:f_group_study/controller/group_controller.dart';
 import 'package:f_group_study/firebase_options.dart';
 import 'package:f_group_study/router.dart';
 import 'package:f_group_study/features/common/error_text.dart';
@@ -47,6 +48,11 @@ class _AppState extends ConsumerState<App> {
         .read(authControllerProvider.notifier)
         .getUserDataById(data.uid);
     ref.read(userProvider.notifier).update((state) => userModel);
+    if (userModel != null) {
+      ref
+          .read(groupControllerProvider.notifier)
+          .fetchGroupsInTimeZone(userModel!.timeZoneOffset);
+    }
     setState(() {});
   }
 

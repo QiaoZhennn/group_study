@@ -1,5 +1,6 @@
 import 'package:f_group_study/models/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:routemaster/routemaster.dart';
 
 class ShowGroupList extends StatelessWidget {
   const ShowGroupList({super.key, required this.user});
@@ -18,7 +19,10 @@ class ShowGroupList extends StatelessWidget {
               title: Text(user.joinedGroups[index].name),
               subtitle: Text(user.joinedGroups[index].description),
               trailing: Icon(Icons.arrow_forward_ios),
-              onTap: () => print("tapped"),
+              onTap: () {
+                Routemaster.of(context)
+                    .push('/group_screen/${user.joinedGroups[index].id}');
+              },
             ),
           );
         },

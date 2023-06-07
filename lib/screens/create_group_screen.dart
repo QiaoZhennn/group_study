@@ -63,7 +63,7 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
         final String name = groupNameController.text;
         int randomNumber = random.nextInt(9000) + 1000;
         final String id =
-            '${user.id.toLowerCase().substring(0, 4)}_${randomNumber}';
+            '${user.id.toLowerCase().substring(0, 4)}${randomNumber}';
         final String description = groupDescriptionController.text;
         final String studyContent = selectedStudyContent;
         final int checkResultCount = int.parse(

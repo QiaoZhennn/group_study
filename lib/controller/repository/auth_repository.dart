@@ -30,10 +30,13 @@ class AuthRepository {
     try {
       final userCredential = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
+      DateTime now = DateTime.now();
       UserModel userModel = UserModel(
           id: userCredential.user!.uid,
           name: name,
           email: userCredential.user!.email ?? "",
+          createdAt: now.toUtc(),
+          timeZoneOffset: now.timeZoneOffset.inHours,
           lcAccountName: "",
           lcSubmissions: [],
           lcPenalties: [],
@@ -106,10 +109,13 @@ class AuthRepository {
 
       UserModel userModel;
       if (userCredential.additionalUserInfo!.isNewUser) {
+        DateTime now = DateTime.now();
         userModel = UserModel(
             id: userCredential.user!.uid,
             name: userCredential.user?.displayName ?? "",
             email: userCredential.user!.email ?? "",
+            createdAt: now.toUtc(),
+            timeZoneOffset: now.timeZoneOffset.inHours,
             lcAccountName: "",
             lcSubmissions: [],
             lcPenalties: [],

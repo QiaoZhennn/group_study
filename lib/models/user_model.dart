@@ -11,6 +11,8 @@ class UserModel {
   final String id;
   final String name;
   final String email;
+  final DateTime createdAt;
+  final int timeZoneOffset;
   final String lcAccountName;
   final List<LcSubmissionModel> lcSubmissions;
   final List<LcPenaltyModel> lcPenalties;
@@ -21,6 +23,8 @@ class UserModel {
     required this.id,
     required this.name,
     required this.email,
+    required this.createdAt,
+    required this.timeZoneOffset,
     required this.lcAccountName,
     required this.lcSubmissions,
     required this.lcPenalties,
@@ -33,6 +37,8 @@ class UserModel {
     String? id,
     String? name,
     String? email,
+    DateTime? createdAt,
+    int? timeZoneOffset,
     String? lcAccountName,
     List<LcSubmissionModel>? lcSubmissions,
     List<LcPenaltyModel>? lcPenalties,
@@ -44,6 +50,8 @@ class UserModel {
       id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
+      createdAt: createdAt ?? this.createdAt,
+      timeZoneOffset: timeZoneOffset ?? this.timeZoneOffset,
       lcAccountName: lcAccountName ?? this.lcAccountName,
       lcSubmissions: lcSubmissions ?? this.lcSubmissions,
       lcPenalties: lcPenalties ?? this.lcPenalties,
@@ -58,6 +66,8 @@ class UserModel {
       'id': id,
       'name': name,
       'email': email,
+      'createdAt': createdAt.millisecondsSinceEpoch,
+      'timeZoneOffset': timeZoneOffset,
       'lcAccountName': lcAccountName,
       'lcSubmissions': lcSubmissions.map((x) => x.toMap()).toList(),
       'lcPenalties': lcPenalties.map((x) => x.toMap()).toList(),
@@ -72,6 +82,8 @@ class UserModel {
       id: map['id'] ?? '',
       name: map['name'] ?? '',
       email: map['email'] ?? '',
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt']),
+      timeZoneOffset: map['timeZoneOffset']?.toInt() ?? 0,
       lcAccountName: map['lcAccountName'] ?? '',
       lcSubmissions: List<LcSubmissionModel>.from(
           map['lcSubmissions']?.map((x) => LcSubmissionModel.fromMap(x))),
@@ -92,7 +104,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, name: $name, email: $email, lcAccountName: $lcAccountName, lcSubmissions: $lcSubmissions, lcPenalties: $lcPenalties, lcBalance: $lcBalance, joinedGroups: $joinedGroups, createdGroups: $createdGroups)';
+    return 'UserModel(id: $id, name: $name, email: $email, createdAt: $createdAt, timeZoneOffset: $timeZoneOffset, lcAccountName: $lcAccountName, lcSubmissions: $lcSubmissions, lcPenalties: $lcPenalties, lcBalance: $lcBalance, joinedGroups: $joinedGroups, createdGroups: $createdGroups)';
   }
 
   @override
@@ -103,6 +115,8 @@ class UserModel {
         other.id == id &&
         other.name == name &&
         other.email == email &&
+        other.createdAt == createdAt &&
+        other.timeZoneOffset == timeZoneOffset &&
         other.lcAccountName == lcAccountName &&
         listEquals(other.lcSubmissions, lcSubmissions) &&
         listEquals(other.lcPenalties, lcPenalties) &&
@@ -116,6 +130,8 @@ class UserModel {
     return id.hashCode ^
         name.hashCode ^
         email.hashCode ^
+        createdAt.hashCode ^
+        timeZoneOffset.hashCode ^
         lcAccountName.hashCode ^
         lcSubmissions.hashCode ^
         lcPenalties.hashCode ^

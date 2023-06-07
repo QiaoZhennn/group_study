@@ -38,4 +38,15 @@ class GroupRepository {
       return left(Failure(e.toString()));
     }
   }
+
+  Future<List<GroupModel>> getAllGroupsInSameTimeZone(
+      int timeZoneOffset) async {
+    print('group_repository getAllGroupsInSameTimeZone');
+    final snapshot =
+        await _groups.where('timeZoneOffset', isEqualTo: timeZoneOffset).get();
+    final List<GroupModel> groupModels = snapshot.docs
+        .map((e) => GroupModel.fromMap(e.data() as Map<String, dynamic>))
+        .toList();
+    return groupModels;
+  }
 }

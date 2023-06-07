@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:routemaster/routemaster.dart';
 
 import '../controller/auth_controller.dart';
+import '../controller/group_controller.dart';
 import '../models/group_model.dart';
 import '../models/user_model.dart';
 
@@ -22,6 +23,9 @@ class HomeScreen extends ConsumerWidget {
     ref.read(userProvider.notifier).update((state) => userModel);
     // user = ref.read(userProvider);
     // studyGroupCount = user?.joinedGroups.length ?? 0;
+    ref
+        .read(groupControllerProvider.notifier)
+        .fetchGroupsInTimeZone(userModel.timeZoneOffset);
   }
 
   @override
@@ -50,40 +54,3 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 }
-
-
-// Widget build(BuildContext context, WidgetRef ref) {
-//     // print('count: $studyGroupCount');
-//     UserModel? user = ref.watch(userProvider);
-//     // print('user: $user');
-//     return CustomScrollView(
-//       slivers: [
-//         // if (user != null)
-//         //   SliverToBoxAdapter(
-//         //     child: Text(
-//         //       user!.name,
-//         //       overflow: TextOverflow.fade,
-//         //     ),
-//         //   ),
-//         SliverToBoxAdapter(
-//           child: ElevatedButton(
-//             onPressed: () => createAStudyGroup(context),
-//             child: const Text('Create A Study Group'),
-//           ),
-//         ),
-//         SliverToBoxAdapter(child: Text('Joined Groups')),
-//         // if (user != null)
-//         //   ListView.builder(
-//         //     itemBuilder: (context, index) {
-//         //       final GroupModel group = user!.joinedGroups[index];
-//         //       return Card(
-//         //         child: ListTile(
-//         //           title: Text(group.name),
-//         //         ),
-//         //       );
-//         //     },
-//         //     itemCount: 2,
-//         //   )
-//       ],
-//     );
-//   }
