@@ -1,9 +1,12 @@
 import 'package:f_group_study/controller/group_controller.dart';
+import 'package:f_group_study/controller/repository/group_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:routemaster/routemaster.dart';
 
 import '../../models/group_model.dart';
+import '../common/error_text.dart';
+import '../common/loader.dart';
 
 class SearchGroupDelegate extends SearchDelegate {
   final WidgetRef ref;
@@ -16,7 +19,8 @@ class SearchGroupDelegate extends SearchDelegate {
   GroupModel? searchedGroup;
 
   void searchGroups() async {
-    final groupsInSameTimeZone = ref.read(groupsInSameTimeZoneProvider);
+    final groupsInSameTimeZone = ref.watch(groupsInSameTimeZoneProvider);
+    print(groupsInSameTimeZone.length);
     if (query.isEmpty) {
       groups = [];
       return;
@@ -28,8 +32,6 @@ class SearchGroupDelegate extends SearchDelegate {
         if (res.length >= 10) {
           break;
         }
-      } else {
-        print('not found: $query, ${group.id}');
       }
     }
     groups = res;
@@ -52,29 +54,42 @@ class SearchGroupDelegate extends SearchDelegate {
     return null;
   }
 
-  void getGroupById(BuildContext context) async {
-    searchedGroup = await ref
-        .read(groupControllerProvider.notifier)
-        .getGroupById(context, query.toLowerCase().trim());
-  }
-
   @override
   Widget buildResults(BuildContext context) {
-    getGroupById(context);
-    if (searchedGroup != null) {
-      return ListTile(
-        leading: Icon(Icons.group),
-        title: Text(searchedGroup!.name),
-        subtitle: Text(
-          '${searchedGroup!.id} ${searchedGroup!.studyContent}',
-          overflow: TextOverflow.ellipsis,
-        ),
-        dense: true,
-        trailing: Icon(Icons.arrow_forward_ios),
-        onTap: () => print("tapped Searched"),
-      );
+    if (query.isEmpty) {
+      return Container();
     }
-    return Container();
+
+    return FutureBuilder<GroupModel>(
+      future: ref
+          .watch(groupRepositoryProvider)
+          .getGroupById(query.toLowerCase().trim()),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Loader(); // Display a loading indicator while waiting for data
+        } else if (snapshot.hasError) {
+          return ErrorText(
+              error: snapshot.error
+                  .toString()); // Display an error message if an error occurred
+        } else if (!snapshot.hasData) {
+          return Container(); // Return a default widget or null if no data is available
+        } else {
+          final GroupModel group = snapshot.data!;
+          return ListTile(
+            leading: Icon(Icons.group),
+            title: Text(group.name),
+            subtitle: Text(
+              '${group.id} ${group.studyContent}',
+              overflow: TextOverflow.ellipsis,
+            ),
+            dense: true,
+            trailing: Icon(Icons.arrow_forward_ios),
+            onTap: () =>
+                Routemaster.of(context).push('/group_screen/${group.id}'),
+          );
+        }
+      },
+    );
   }
 
   @override

@@ -74,19 +74,23 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
             _leetcodeKey.currentState!.checkResultTimeUnit;
         final double checkResultPerPenalty = double.parse(
             _leetcodeKey.currentState!.checkResultPerPenaltyController.text);
-        GroupModel groupModel = await groupController.createGroup(
-          context,
-          id,
-          name,
-          description,
-          studyContent,
-          checkResultCount,
-          checkResultTimeCount,
-          checkResultTimeUnit,
-          checkResultPerPenalty,
-          isPublic,
-          isParticipated,
-        );
+
+        final DateTime now = DateTime.now();
+        GroupModel groupModel = GroupModel(
+            id: id,
+            name: name,
+            description: description,
+            users: isParticipated ? [user.id] : [],
+            createdBy: user.id,
+            createdAt: now.toUtc(),
+            timeZoneOffset: now.timeZoneOffset.inHours,
+            isPublic: isPublic,
+            studyContent: studyContent,
+            checkResultCount: checkResultCount,
+            checkResultTimeCount: checkResultTimeCount,
+            checkResultTimeUnit: checkResultTimeUnit,
+            checkResultPerPenalty: checkResultPerPenalty);
+        groupController.createGroup(context, groupModel);
         final userController = ref.read(userControllerProvider.notifier);
         userController.joinGroups(context, groupModel,
             createdGroup: groupModel);

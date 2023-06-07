@@ -62,4 +62,11 @@ enum ScreenSelected {
 
 class Constants {
   static const logoUrl = 'https://flutter.dev/images/flutter-logo-sharing.png';
+  static const String kDocumentExist = 'document already exist';
+  static const String kDocumentNotFound = 'document not found';
+}
+
+class DocumentNotFoundExeption implements Exception {
+  final String message = 'document not found';
+  const DocumentNotFoundExeption();
 }
