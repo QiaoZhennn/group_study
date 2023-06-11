@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:f_group_study/models/group_model.dart';
 import 'package:f_group_study/models/lc_submission_model.dart';
 
 import 'lc_penalty_model.dart';
@@ -17,8 +16,8 @@ class UserModel {
   final List<LcSubmissionModel> lcSubmissions;
   final List<LcPenaltyModel> lcPenalties;
   final double lcBalance;
-  final List<GroupModel> joinedGroups;
-  final List<GroupModel> createdGroups;
+  final List<String> joinedGroups;
+  final List<String> createdGroups;
   UserModel({
     required this.id,
     required this.name,
@@ -43,8 +42,8 @@ class UserModel {
     List<LcSubmissionModel>? lcSubmissions,
     List<LcPenaltyModel>? lcPenalties,
     double? lcBalance,
-    List<GroupModel>? joinedGroups,
-    List<GroupModel>? createdGroups,
+    List<String>? joinedGroups,
+    List<String>? createdGroups,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -72,8 +71,8 @@ class UserModel {
       'lcSubmissions': lcSubmissions.map((x) => x.toMap()).toList(),
       'lcPenalties': lcPenalties.map((x) => x.toMap()).toList(),
       'lcBalance': lcBalance,
-      'joinedGroups': joinedGroups.map((x) => x.toMap()).toList(),
-      'createdGroups': createdGroups.map((x) => x.toMap()).toList(),
+      'joinedGroups': joinedGroups,
+      'createdGroups': createdGroups,
     };
   }
 
@@ -90,10 +89,8 @@ class UserModel {
       lcPenalties: List<LcPenaltyModel>.from(
           map['lcPenalties']?.map((x) => LcPenaltyModel.fromMap(x))),
       lcBalance: map['lcBalance']?.toDouble() ?? 0.0,
-      joinedGroups: List<GroupModel>.from(
-          map['joinedGroups']?.map((x) => GroupModel.fromMap(x))),
-      createdGroups: List<GroupModel>.from(
-          map['createdGroups']?.map((x) => GroupModel.fromMap(x))),
+      joinedGroups: List<String>.from(map['joinedGroups']),
+      createdGroups: List<String>.from(map['createdGroups']),
     );
   }
 

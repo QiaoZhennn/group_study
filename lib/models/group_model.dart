@@ -6,7 +6,7 @@ class GroupModel {
   final String id;
   final String name;
   final String description;
-  final List<String> users;
+  final List<String> members;
   final String createdBy;
   final DateTime createdAt; // UTC
   final int timeZoneOffset; // CreatorTimeZone - UTC
@@ -20,7 +20,7 @@ class GroupModel {
     required this.id,
     required this.name,
     required this.description,
-    required this.users,
+    required this.members,
     required this.createdBy,
     required this.createdAt,
     required this.timeZoneOffset,
@@ -36,7 +36,7 @@ class GroupModel {
     String? id,
     String? name,
     String? description,
-    List<String>? users,
+    List<String>? members,
     String? createdBy,
     DateTime? createdAt,
     int? timeZoneOffset,
@@ -51,7 +51,7 @@ class GroupModel {
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
-      users: users ?? this.users,
+      members: members ?? this.members,
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,
       timeZoneOffset: timeZoneOffset ?? this.timeZoneOffset,
@@ -70,7 +70,7 @@ class GroupModel {
       'id': id,
       'name': name,
       'description': description,
-      'users': users,
+      'members': members,
       'createdBy': createdBy,
       'createdAt': createdAt.millisecondsSinceEpoch,
       'timeZoneOffset': timeZoneOffset,
@@ -88,7 +88,7 @@ class GroupModel {
       id: map['id'] ?? '',
       name: map['name'] ?? '',
       description: map['description'] ?? '',
-      users: List<String>.from(map['users']),
+      members: List<String>.from(map['members']),
       createdBy: map['createdBy'] ?? '',
       createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt']),
       timeZoneOffset: map['timeZoneOffset']?.toInt() ?? 0,
@@ -108,7 +108,7 @@ class GroupModel {
 
   @override
   String toString() {
-    return 'GroupModel(id: $id, name: $name, description: $description, users: $users, createdBy: $createdBy, createdAt: $createdAt, timeZoneOffset: $timeZoneOffset, isPublic: $isPublic, studyContent: $studyContent, checkResultCount: $checkResultCount, checkResultTimeCount: $checkResultTimeCount, checkResultTimeUnit: $checkResultTimeUnit, checkResultPerPenalty: $checkResultPerPenalty)';
+    return 'GroupModel(id: $id, name: $name, description: $description, members: $members, createdBy: $createdBy, createdAt: $createdAt, timeZoneOffset: $timeZoneOffset, isPublic: $isPublic, studyContent: $studyContent, checkResultCount: $checkResultCount, checkResultTimeCount: $checkResultTimeCount, checkResultTimeUnit: $checkResultTimeUnit, checkResultPerPenalty: $checkResultPerPenalty)';
   }
 
   @override
@@ -119,7 +119,7 @@ class GroupModel {
         other.id == id &&
         other.name == name &&
         other.description == description &&
-        listEquals(other.users, users) &&
+        listEquals(other.members, members) &&
         other.createdBy == createdBy &&
         other.createdAt == createdAt &&
         other.timeZoneOffset == timeZoneOffset &&
@@ -136,7 +136,7 @@ class GroupModel {
     return id.hashCode ^
         name.hashCode ^
         description.hashCode ^
-        users.hashCode ^
+        members.hashCode ^
         createdBy.hashCode ^
         createdAt.hashCode ^
         timeZoneOffset.hashCode ^

@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:f_group_study/controller/provider/firebase_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fpdart/fpdart.dart';
 
 import '../../constants.dart';
 import '../../models/group_model.dart';
-import '../../features/common/utils.dart';
+import '../../models/user_model.dart';
 
 final groupRepositoryProvider = Provider<GroupRepository>(
     (ref) => GroupRepository(ref.read(firestoreProvider)));
@@ -17,22 +16,25 @@ class GroupRepository {
 
   CollectionReference get _groups => _firestore.collection('group_model');
 
-  Future<GroupModel> getGroupById(String id) async {
+  CollectionReference get _users => _firestore.collection('user_model');
+
+  Stream<GroupModel> getGroupById(String id) {
     print('group_repository getGroupById($id)');
-    final group = await _groups.doc(id).get();
-    if (group.exists) {
-      GroupModel groupModel =
-          GroupModel.fromMap(group.data() as Map<String, dynamic>);
-      return groupModel;
-    }
-    throw const DocumentNotFoundExeption();
+    return _groups.doc(id).snapshots().map((event) {
+      if (event.exists) {
+        GroupModel groupModel =
+            GroupModel.fromMap(event.data() as Map<String, dynamic>);
+        return groupModel;
+      }
+      throw const DocumentNotFoundExeption();
+    });
   }
 
-  FutureVoid createGroup(GroupModel groupModel) async {
+  Future<void> createGroup(GroupModel groupModel) async {
     try {
-      return right(await _groups.doc(groupModel.id).set(groupModel.toMap()));
+      await _groups.doc(groupModel.id).set(groupModel.toMap());
     } catch (e) {
-      return left(Failure(e.toString()));
+      rethrow;
     }
   }
 
@@ -45,5 +47,52 @@ class GroupRepository {
         .map((e) => GroupModel.fromMap(e.data() as Map<String, dynamic>))
         .toList();
     return groupModels;
+  }
+
+  Future<List<UserModel>> getGroupMembers(GroupModel group) async {
+    print('group_repository fetchGroupMembers');
+    final snapshot =
+        await _users.where(FieldPath.documentId, whereIn: group.members).get();
+    return snapshot.docs
+        .map((e) => UserModel.fromMap(e.data() as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<GroupModel> updateGroup(GroupModel group) async {
+    print('group_repository updateGroup: ${group.id}');
+    try {
+      await _groups.doc(group.id).update(group.toMap());
+      return group.copyWith();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Stream<List<GroupModel>> getCreatedGroupsByUser(UserModel user) {
+    print('user_repository getCreatedGroupsByUser');
+    return _groups
+        .where(FieldPath.documentId, whereIn: user.createdGroups)
+        .snapshots()
+        .map((event) {
+      List<GroupModel> groupModels = [];
+      for (var doc in event.docs) {
+        groupModels.add(GroupModel.fromMap(doc.data() as Map<String, dynamic>));
+      }
+      return groupModels;
+    });
+  }
+
+  Stream<List<GroupModel>> getJoinedGroupsByUser(UserModel user) {
+    print('user_repository getJoinedGroupsByUser');
+    return _groups
+        .where(FieldPath.documentId, whereIn: user.joinedGroups)
+        .snapshots()
+        .map((event) {
+      List<GroupModel> groupModels = [];
+      for (var doc in event.docs) {
+        groupModels.add(GroupModel.fromMap(doc.data() as Map<String, dynamic>));
+      }
+      return groupModels;
+    });
   }
 }

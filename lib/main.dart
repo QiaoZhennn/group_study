@@ -1,4 +1,5 @@
 import 'package:f_group_study/controller/group_controller.dart';
+import 'package:f_group_study/controller/repository/user_repository.dart';
 import 'package:f_group_study/firebase_options.dart';
 import 'package:f_group_study/router.dart';
 import 'package:f_group_study/features/common/error_text.dart';
@@ -12,6 +13,7 @@ import 'package:routemaster/routemaster.dart';
 import 'constants.dart';
 import 'controller/auth_controller.dart';
 import 'controller/theme_controller.dart';
+import 'controller/user_controller.dart';
 import 'models/user_model.dart';
 import 'screens/nav_screen.dart';
 
@@ -43,10 +45,8 @@ class _AppState extends ConsumerState<App> {
 
   void getData(WidgetRef ref, User data) async {
     if (userModel != null) return;
-    print('call');
-    userModel = await ref
-        .read(authControllerProvider.notifier)
-        .getUserDataById(data.uid);
+    userModel =
+        await ref.read(userRepositoryProvider).getUserById(data.uid).first;
     ref.read(userProvider.notifier).update((state) => userModel);
     if (userModel != null) {
       ref
@@ -55,24 +55,6 @@ class _AppState extends ConsumerState<App> {
     }
     setState(() {});
   }
-
-  // bool get useLightMode {
-  //   switch (themeMode) {
-  //     case ThemeMode.system:
-  //       return View.of(context).platformDispatcher.platformBrightness ==
-  //           Brightness.light;
-  //     case ThemeMode.light:
-  //       return true;
-  //     case ThemeMode.dark:
-  //       return false;
-  //   }
-  // }
-
-  // void handleBrightnessChange(bool useLightMode) {
-  //   setState(() {
-  //     themeMode = useLightMode ? ThemeMode.light : ThemeMode.dark;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {

@@ -60,10 +60,11 @@ class SearchGroupDelegate extends SearchDelegate {
       return Container();
     }
 
-    return FutureBuilder<GroupModel>(
+    return FutureBuilder<GroupModel?>(
       future: ref
           .watch(groupRepositoryProvider)
-          .getGroupById(query.toLowerCase().trim()),
+          .getGroupById(query.toLowerCase().trim())
+          .first,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Loader(); // Display a loading indicator while waiting for data

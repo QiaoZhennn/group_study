@@ -17,24 +17,57 @@ class UserRepository {
 
   CollectionReference get _users => _firestore.collection('user_model');
 
-  FutureEither<UserModel> joinGroups(String uid, GroupModel joinedGroup,
-      {GroupModel? createdGroup}) async {
+  Future<UserModel> updateUser(UserModel user) async {
+    print('user_repository updateUser');
     try {
-      print('userRepository joinGroups');
-      final userDoc = await _users.doc(uid).get();
-      if (!userDoc.exists) {
-        return left(Failure('userDoc does not exist'));
-      }
-      UserModel user =
-          UserModel.fromMap(userDoc.data() as Map<String, dynamic>);
-      user.joinedGroups.add(joinedGroup);
-      if (createdGroup != null) {
-        user.createdGroups.add(createdGroup);
-      }
-      await _users.doc(uid).update(user.toMap());
-      return right(user);
+      await _users.doc(user.id).update(user.toMap());
+      return user.copyWith();
     } catch (e) {
-      return left(Failure(e.toString()));
+      print('user_repository updateUser error: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> updateCreatedGroups(UserModel user) async {
+    print('user_repository updateCreatedGroups');
+    try {
+      await _users.doc(user.id).update({'createdGroups': user.createdGroups});
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateJoinedGroups(UserModel user) async {
+    print('user_repository updateJoinedGroups');
+    try {
+      await _users.doc(user.id).update({'joinedGroups': user.joinedGroups});
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // FutureEither<UserModel> joinGroups(UserModel user, GroupModel joinedGroup,
+  //     {GroupModel? createdGroup}) async {
+  //   try {
+  //     joinedGroup.users.add(user.id);
+  //     user.joinedGroups.add(joinedGroup);
+  //     if (createdGroup != null) {
+  //       user.createdGroups.add(createdGroup);
+  //     }
+  //     await _users.doc(uid).update(user.toMap());
+  //     return right(user);
+  //   } catch (e) {
+  //     return left(Failure(e.toString()));
+  //   }
+  // }
+
+  Stream<UserModel> getUserById(String id) {
+    print('user_repository getUserById');
+    try {
+      return _users.doc(id).snapshots().map(
+          (event) => UserModel.fromMap(event.data() as Map<String, dynamic>));
+    } catch (e) {
+      rethrow;
     }
   }
 }

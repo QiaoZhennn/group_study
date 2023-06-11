@@ -1,3 +1,5 @@
+import 'package:f_group_study/controller/repository/user_repository.dart';
+import 'package:f_group_study/controller/user_controller.dart';
 import 'package:f_group_study/features/group/show_group_list.dart';
 import 'package:f_group_study/screens/create_group_screen.dart';
 import 'package:flutter/material.dart';
@@ -17,15 +19,6 @@ class HomeScreen extends ConsumerWidget {
 
   Future<void> onRefresh(WidgetRef ref) async {
     print('refresh');
-    UserModel userModel = await ref
-        .read(authControllerProvider.notifier)
-        .getUserDataById(ref.read(userProvider.notifier).state!.id);
-    ref.read(userProvider.notifier).update((state) => userModel);
-    // user = ref.read(userProvider);
-    // studyGroupCount = user?.joinedGroups.length ?? 0;
-    ref
-        .read(groupControllerProvider.notifier)
-        .fetchGroupsInTimeZone(userModel.timeZoneOffset);
   }
 
   @override
@@ -36,15 +29,24 @@ class HomeScreen extends ConsumerWidget {
     if (user == null) {
       return const Center(child: CircularProgressIndicator());
     }
+    final groups = ref.watch(joinedGroupsProvider);
+    // List<GroupModel> groups = [];
     return Scaffold(
       body: Container(
         child: Column(children: [
           Text('Home Screen: ${user.name}'),
+          ...user.joinedGroups.map((e) => Text(e)).toList(),
           ElevatedButton(
             onPressed: () => createAStudyGroup(context),
             child: const Text('Create A Study Group'),
           ),
-          Expanded(child: ShowGroupList(user: user)),
+          Expanded(
+              child: ShowGroupList(
+                  user: user,
+                  groups: groups.when(
+                      data: (data) => data,
+                      error: (error, stackTrace) => [],
+                      loading: () => []))),
         ]),
       ),
       floatingActionButton: FloatingActionButton(

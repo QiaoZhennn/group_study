@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:f_group_study/controller/auth_controller.dart';
+import 'package:f_group_study/features/common/loader.dart';
 import 'package:f_group_study/features/group/study_content_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,7 +33,7 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
   final _leetcodeFormKey = GlobalKey<FormState>();
   final _leetcodeKey = GlobalKey<CreateLeetcodeStudyGroupState>();
   bool isPublic = false;
-  bool isParticipated = true;
+  bool isMember = true;
   String selectedStudyContent = StudyContentDropdown.nameMap[0][0];
   Random random = Random();
 
@@ -80,7 +81,7 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
             id: id,
             name: name,
             description: description,
-            users: isParticipated ? [user.id] : [],
+            members: isMember ? [user.id] : [],
             createdBy: user.id,
             createdAt: now.toUtc(),
             timeZoneOffset: now.timeZoneOffset.inHours,
@@ -90,10 +91,7 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
             checkResultTimeCount: checkResultTimeCount,
             checkResultTimeUnit: checkResultTimeUnit,
             checkResultPerPenalty: checkResultPerPenalty);
-        groupController.createGroup(context, groupModel);
-        final userController = ref.read(userControllerProvider.notifier);
-        userController.joinGroups(context, groupModel,
-            createdGroup: groupModel);
+        groupController.createGroup(context, groupModel, isMember);
       }
     } else {
       print("WIP");
@@ -139,7 +137,7 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
             ),
             Row(
               children: [
-                const Text('Need creator\' approval to join?'),
+                const Text('Need creator\'s approval to join?'),
                 Switch(
                     value: isPublic,
                     onChanged: (value) {
@@ -153,10 +151,10 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
               children: [
                 const Text('Will you participate in this study plan?'),
                 Switch(
-                    value: isParticipated,
+                    value: isMember,
                     onChanged: (value) {
                       setState(() {
-                        isParticipated = value;
+                        isMember = value;
                       });
                     }),
               ],
@@ -171,9 +169,11 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
             CreateLeetcodeStudyGroup(_leetcodeFormKey, key: _leetcodeKey),
             Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: ElevatedButton(
-                    onPressed: () => submit(context),
-                    child: const Text('Create'))),
+                child: ref.watch(groupControllerProvider)
+                    ? const Loader()
+                    : ElevatedButton(
+                        onPressed: () => submit(context),
+                        child: const Text('Create'))),
           ]),
         ),
       ),

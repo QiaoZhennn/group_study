@@ -60,19 +60,8 @@ class AuthRepository {
     try {
       final userCredential = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      UserModel userModel = await getUserDataById(userCredential.user!.uid);
-      // userModel = UserModel(
-      //     id: userCredential.user!.uid,
-      //     name: userCredential.user?.displayName ?? "email",
-      //     email: userCredential.user!.email ?? "",
-      //     lcAccountName: "",
-      //     lcSubmissions: [],
-      //     lcPenalties: [],
-      //     lcBalance: 0.0,
-      //     joinedGroups: [],
-      //     createdGroups: []);
+      UserModel userModel = await getUserById(userCredential.user!.uid);
       print('auth_repository signInWithEmail');
-      // await _users.doc(userModel.id).set(userModel.toMap());
       return right(userModel);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -126,7 +115,7 @@ class AuthRepository {
         await _users.doc(userModel.id).set(userModel.toMap());
       } else {
         print('auth_repository signInWithGoogle getUserData');
-        userModel = await getUserDataById(userCredential.user!.uid);
+        userModel = await getUserById(userCredential.user!.uid);
       }
       return right(userModel);
     } catch (e) {
@@ -149,9 +138,9 @@ class AuthRepository {
     }
   }
 
-  Future<UserModel> getUserDataById(String id) async {
+  Future<UserModel> getUserById(String id) async {
     try {
-      print('auth_repository getUserDataById');
+      print('auth_repository getUserById');
       final user = await _users.doc(id).get();
       return UserModel.fromMap(user.data() as Map<String, dynamic>);
     } catch (e) {
@@ -159,16 +148,11 @@ class AuthRepository {
     }
   }
 
-  // Stream<UserModel> getUserData(String id) {
-  //   print('auth_repository getUserData');
-  //   return _users.doc(id).snapshots().map((event) {
-  //     return UserModel.fromMap(event.data() as Map<String, dynamic>);
-  //   });
-  // }
-
   void logOut() async {
     print('auth_repository logOut');
-    await _googleSignIn.signOut();
     await _auth.signOut();
+    print('auth sign out');
+    await _googleSignIn.signOut();
+    print('google sign out');
   }
 }
