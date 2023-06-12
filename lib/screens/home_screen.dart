@@ -44,7 +44,9 @@ class HomeScreen extends ConsumerWidget {
               child: ShowGroupList(
                   user: user,
                   groups: groups.when(
-                      data: (data) => data,
+                      data: (data) {
+                        return data;
+                      },
                       error: (error, stackTrace) => [],
                       loading: () => []))),
         ]),

@@ -1,3 +1,4 @@
+import 'package:f_group_study/controller/group_controller.dart';
 import 'package:f_group_study/controller/repository/auth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -75,5 +76,9 @@ class AuthController extends StateNotifier<bool> {
   void logOut() async {
     _authRepository.logOut();
     // _ref.read(userProvider.notifier).update((state) => null);
+  }
+
+  Future<void> deleteAccount() async {
+    _authRepository.deleteAccount();
   }
 }

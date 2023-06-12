@@ -23,4 +23,26 @@ class UserController extends StateNotifier<bool> {
   final Ref _ref;
 
   UserController(this._userRepository, this._ref) : super(false);
+
+  void deleteAccount(BuildContext context) async {
+    final UserModel user = _ref.read(userProvider)!;
+    try {
+      final List<GroupModel> joinedGroups =
+          await _ref.watch(joinedGroupsProvider.future);
+      final List<GroupModel> updatedGroups = [];
+      for (final group in joinedGroups) {
+        final groupModel = group.copyWith();
+        groupModel.members.remove(user.id);
+        updatedGroups.add(groupModel);
+      }
+      await _ref
+          .watch(groupRepositoryProvider)
+          .updateGroupsMembers(updatedGroups);
+      await _ref.watch(userRepositoryProvider).deleteUserById(user.id);
+      await _ref.watch(authControllerProvider.notifier).deleteAccount();
+      showSnackBar(context, 'Account ${user.name} is deleted');
+    } catch (e) {
+      showSnackBar(context, 'Failed to delete account Error: $e');
+    }
+  }
 }

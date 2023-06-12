@@ -20,7 +20,6 @@ class SearchGroupDelegate extends SearchDelegate {
 
   void searchGroups() async {
     final groupsInSameTimeZone = ref.watch(groupsInSameTimeZoneProvider);
-    print(groupsInSameTimeZone.length);
     if (query.isEmpty) {
       groups = [];
       return;

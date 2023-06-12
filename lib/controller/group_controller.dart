@@ -40,9 +40,12 @@ final groupMembersProvider =
   return ref.watch(groupRepositoryProvider).getGroupMembers(group);
 });
 
-final joinedGroupsProvider = StreamProvider<List<GroupModel>>((ref) {
-  final user = ref.watch(userProvider)!;
-  return ref.watch(groupRepositoryProvider).getJoinedGroupsByUser(user);
+final joinedGroupsProvider = FutureProvider<List<GroupModel>>((ref) {
+  final user = ref.watch(userProvider);
+  if (user == null) {
+    return Future.value([]);
+  }
+  return ref.watch(groupRepositoryProvider).getJoinedGroupsByUser(user).first;
 });
 
 class GroupController extends StateNotifier<bool> {

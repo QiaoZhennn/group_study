@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -154,5 +156,13 @@ class AuthRepository {
     print('auth sign out');
     await _googleSignIn.signOut();
     print('google sign out');
+  }
+
+  void deleteAccount() async {
+    print('auth_repository deleteAccount');
+    await _auth.currentUser!.delete();
+    print('auth delete');
+    await _googleSignIn.disconnect();
+    print('google disconnect');
   }
 }

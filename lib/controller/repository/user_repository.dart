@@ -16,6 +16,7 @@ class UserRepository {
   UserRepository(this._firestore);
 
   CollectionReference get _users => _firestore.collection('user_model');
+  CollectionReference get _groups => _firestore.collection('group_model');
 
   Future<UserModel> updateUser(UserModel user) async {
     print('user_repository updateUser');
@@ -66,6 +67,15 @@ class UserRepository {
     try {
       return _users.doc(id).snapshots().map(
           (event) => UserModel.fromMap(event.data() as Map<String, dynamic>));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> deleteUserById(String id) {
+    print('user_repository deleteUserById');
+    try {
+      return _users.doc(id).delete();
     } catch (e) {
       rethrow;
     }

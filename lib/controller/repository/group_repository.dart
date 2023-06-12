@@ -24,6 +24,7 @@ class GroupRepository {
       if (event.exists) {
         GroupModel groupModel =
             GroupModel.fromMap(event.data() as Map<String, dynamic>);
+        // print('group_repository members: ${groupModel.members}');
         return groupModel;
       }
       throw const DocumentNotFoundExeption();
@@ -94,5 +95,18 @@ class GroupRepository {
       }
       return groupModels;
     });
+  }
+
+  Future<void> updateGroupsMembers(
+    List<GroupModel> joinedGroups,
+  ) async {
+    final batch = _firestore.batch();
+    for (final group in joinedGroups) {
+      final groupRef = _groups.doc(group.id);
+      batch.update(
+          groupRef, {'members': group.members, 'createdBy': 'deletedAccount'});
+      await _groups.doc(group.id).update(group.toMap());
+    }
+    await batch.commit();
   }
 }

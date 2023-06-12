@@ -7,7 +7,7 @@ import 'search_screen.dart';
 import '../constants.dart';
 import 'elevation_screen.dart';
 import 'home_screen.dart';
-import 'typography_screen.dart';
+import 'user_profile_screen.dart';
 
 const List<NavigationDestination> appBarDestinations = [
   NavigationDestination(
@@ -25,7 +25,7 @@ const List<NavigationDestination> appBarDestinations = [
   NavigationDestination(
     tooltip: '',
     icon: Icon(Icons.text_snippet_outlined),
-    label: 'Typography',
+    label: 'Profile',
     selectedIcon: Icon(Icons.text_snippet),
   ),
   NavigationDestination(
@@ -65,7 +65,7 @@ class _NavScreenState extends State<NavScreen> {
       case ScreenSelected.color:
         return const SearchScreen();
       case ScreenSelected.typography:
-        return const TypographyScreen();
+        return const UserProfileScreen();
       case ScreenSelected.elevation:
         return const ElevationScreen();
     }
